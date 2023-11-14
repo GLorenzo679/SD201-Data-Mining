@@ -151,8 +151,9 @@ class PointSet:
             elif self.types[i] == FeaturesTypes.CLASSES:
                 gini_split = float("inf")
 
+                # go over all the possible partitions of the feature
                 for j in np.unique(self.features[:, i]):
-                    tmp_gini_split = 0
+                    tmp_gini_split = 0  # gini of the current partition
 
                     mask = self.features[:, i] == j
                     new_ps_left = PointSet(
@@ -189,9 +190,11 @@ class PointSet:
 
                 confusion_matrix = np.zeros((2, 2))
 
+                # go over all the possible partitions of the feature
                 for j in np.unique(self.features[:, i])[:-1]:
-                    tmp_gini_split = 0
+                    tmp_gini_split = 0  # gini of the current partition
 
+                    # if it's the first iteration, compute the confusion matrix
                     if np.sum(confusion_matrix) == 0:
                         mask = self.features[:, i] <= j
                         new_ps_left = PointSet(
@@ -267,48 +270,3 @@ class PointSet:
             return None, None
 
         return best_feature, best_gain
-
-        # elif self.types[i] == FeaturesTypes.REAL:
-        #    gini_split = float("inf")
-        #
-        #    for j in np.unique(self.features[:, i])[1:-1]:
-        #        tmp_gini_split = 0
-        #
-        #        mask = self.features[:, i] <= j
-        #        new_ps_left = PointSet(
-        #            self.features[mask], self.labels[mask], self.types
-        #        )
-        #        new_ps_right = PointSet(
-        #            self.features[~mask], self.labels[~mask], self.types
-        #        )
-        #
-        #        n_child_left = len(new_ps_left.labels)
-        #        n_child_right = len(new_ps_right.labels)
-        #        n = len(self.labels)
-        #
-        #        if self.min_split_points is not None:
-        #            if (
-        #                n_child_left < self.min_split_points
-        #                or n_child_right < self.min_split_points
-        #            ):
-        #                continue
-        #
-        #        valid_split = True
-        #
-        #        gini_left = new_ps_left.get_gini()
-        #        gini_right = new_ps_right.get_gini()
-        #
-        #        tmp_gini_split += (n_child_left / n) * gini_left
-        #        tmp_gini_split += (n_child_right / n) * gini_right
-        #
-        #        if tmp_gini_split < gini_split:
-        #            gini_split = tmp_gini_split
-        #            best_real_val = j
-        #
-        #    if best_real_val != -1:
-        #        mask = self.features[:, i] <= best_real_val
-        #
-        #        left = self.features[mask, i]
-        #        right = self.features[~mask, i]
-        #
-        #        best_real_val = (np.max(left) + np.min(right)) / 2
