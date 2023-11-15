@@ -58,6 +58,21 @@ class PointSet:
         self.idx_split = None
         self.min_split_points = None
 
+    def add_point(self, features: List[float], label: bool) -> None:
+        self.features = np.vstack((self.features, features))
+        self.labels = np.append(self.labels, label)
+
+    def del_point(self, features: List[float], label: bool) -> None:
+        mask = np.ones(len(self.labels), dtype=bool)
+
+        for i in range(len(self.labels)):
+            if np.array_equal(self.features[i], features) and self.labels[i] == label:
+                mask[i] = False
+                break
+
+        self.features = self.features[mask]
+        self.labels = self.labels[mask]
+
     def get_gini(self) -> float:
         """Computes the Gini score of the set of points
 
